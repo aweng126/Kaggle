@@ -8,6 +8,7 @@ from sklearn.pipeline import FeatureUnion
 from sklearn.svm import SVC
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
 
 TITANIC_PATH = os.path.join("../datasets","titanic")
 def load_titanic_data(filename,titanic_path=TITANIC_PATH):
@@ -78,9 +79,9 @@ def main():
 	y_pred = svm_clf.predict(X_test)
 
 	svm_scores = cross_val_score(svm_clf,X_train,y_train,cv=10)
-	print(svm_scores.mean())
+	print("SVM: "+str(svm_scores.mean()))
 
-	gen_submission("gender_submission.csv",test_set["PassengerId"],y_pred)
+	#gen_submission("gender_submission.csv",test_set["PassengerId"],y_pred)
 
 	# 随机森林算法
 	forest_clf = RandomForestClassifier(n_estimators=100,random_state=42)
@@ -88,11 +89,21 @@ def main():
 	forest_pred = forest_clf.predict(X_test)
 	#10折交叉验证
 	forest_scores = cross_val_score(forest_clf,X_train,y_train,cv=10)
-	print(forest_scores.mean())
+	print("random forest: "+str(forest_scores.mean()))
 
     #保存利用random forest的预测结果
-	gen_submission("gender_submission.csv",test_set["PassengerId"],forest_pred)
+	#gen_submission("gender_submission.csv",test_set["PassengerId"],forest_pred)
 
+
+	#adboost 算法
+	adaboost_clf = AdaBoostClassifier(n_estimators=100)
+	adaboost_clf.fit(X_train,y_train)
+	adaboost_pred = adaboost_clf.predict(X_test)
+	#10折交叉验证
+	adaboost_scores = cross_val_score(adaboost_clf,X_train,y_train,cv=10)
+	print("adaboost: "+str(adaboost_scores.mean()))
+
+	gen_submission("gender_submission.csv",test_set["PassengerId"],adaboost_pred)
 
 
 if __name__ == '__main__':
