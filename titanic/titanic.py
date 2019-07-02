@@ -10,6 +10,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 
 TITANIC_PATH = os.path.join("../datasets","titanic")
 def load_titanic_data(filename,titanic_path=TITANIC_PATH):
@@ -104,7 +105,7 @@ def main():
 	adaboost_scores = cross_val_score(adaboost_clf,X_train,y_train,cv=10)
 	print("adaboost: "+str(adaboost_scores.mean()))
 
-	gen_submission("gender_submission.csv",test_set["PassengerId"],adaboost_pred)
+	#gen_submission("gender_submission.csv",test_set["PassengerId"],adaboost_pred)
 
 	#Gradientboosting 
 	gradBoosting_clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
@@ -114,7 +115,18 @@ def main():
 	gradBoosting_scores = cross_val_score(gradBoosting_clf,X_train,y_train,cv=10)
 	print("gradBoosting_scores: "+str(gradBoosting_scores.mean()))
 
-	gen_submission("gender_submission.csv",test_set["PassengerId"],gradBoosting_pred)
+	#gen_submission("gender_submission.csv",test_set["PassengerId"],gradBoosting_pred)
+
+	# ExtraTreesClassifier
+	extraTree_clf = ExtraTreesClassifier(n_estimators=10, max_depth=None, min_samples_split=2, random_state=0)
+	extraTree_clf.fit(X_train,y_train)
+	extraTree_pred = extraTree_clf.predict(X_test)
+	#10折交叉验证
+	extraTree_scores = cross_val_score(extraTree_clf,X_train,y_train,cv=10)
+	print("extraTree_scores: "+str(extraTree_scores.mean()))
+
+	gen_submission("gender_submission.csv",test_set["PassengerId"],extraTree_pred)
+
 
 
 
