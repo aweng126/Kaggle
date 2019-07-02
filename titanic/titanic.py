@@ -9,6 +9,7 @@ from sklearn.svm import SVC
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 
 TITANIC_PATH = os.path.join("../datasets","titanic")
 def load_titanic_data(filename,titanic_path=TITANIC_PATH):
@@ -104,6 +105,17 @@ def main():
 	print("adaboost: "+str(adaboost_scores.mean()))
 
 	gen_submission("gender_submission.csv",test_set["PassengerId"],adaboost_pred)
+
+	#Gradientboosting 
+	gradBoosting_clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
+	gradBoosting_clf.fit(X_train,y_train)
+	gradBoosting_pred = gradBoosting_clf.predict(X_test)
+	#10折交叉验证
+	gradBoosting_scores = cross_val_score(gradBoosting_clf,X_train,y_train,cv=10)
+	print("gradBoosting_scores: "+str(gradBoosting_scores.mean()))
+
+	gen_submission("gender_submission.csv",test_set["PassengerId"],gradBoosting_pred)
+
 
 
 if __name__ == '__main__':
