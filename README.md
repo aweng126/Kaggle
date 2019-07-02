@@ -5,4 +5,5 @@
 ### 1.3 adaboost:0.73684
 ### 1.4 gradientBoosting:0.76076
 ### 1.5 extraTree:0.74162
+### 1.6 voting:0.75119
 

@@ -11,6 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import VotingClassifier
 
 TITANIC_PATH = os.path.join("../datasets","titanic")
 def load_titanic_data(filename,titanic_path=TITANIC_PATH):
@@ -125,8 +126,18 @@ def main():
 	extraTree_scores = cross_val_score(extraTree_clf,X_train,y_train,cv=10)
 	print("extraTree_scores: "+str(extraTree_scores.mean()))
 
-	gen_submission("gender_submission.csv",test_set["PassengerId"],extraTree_pred)
+	#gen_submission("gender_submission.csv",test_set["PassengerId"],extraTree_pred)
 
+    # voting classfier
+	voting_clf = VotingClassifier(estimators=[('svm_clf', svm_clf), ('forest_clf', forest_clf), \
+		('adaboost_clf', adaboost_clf),('gradBoosting_clf',gradBoosting_clf),('extraTree_clf',extraTree_clf)], voting='hard')
+	voting_clf.fit(X_train,y_train)
+	voting_pred = voting_clf.predict(X_test)
+	#10折交叉验证
+	voting_scores = cross_val_score(voting_clf,X_train,y_train,cv=10)
+	print("voting_scores: "+str(voting_scores.mean()))
+
+	gen_submission("gender_submission.csv",test_set["PassengerId"],voting_pred)
 
 
 
